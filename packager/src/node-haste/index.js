@@ -51,7 +51,6 @@ const ERROR_BUILDING_DEP_GRAPH = 'DependencyGraphError';
 class DependencyGraph {
   _opts: {|
     assetExts: Array<string>,
-    extensions: Array<string>,
     extraNodeModules: ?Object,
     forceNodeFilesystemAPI: boolean,
     globalTransformCache: ?GlobalTransformCache,
@@ -65,6 +64,7 @@ class DependencyGraph {
     resetCache: boolean,
     roots: Array<string>,
     shouldThrowOnUnresolvedErrors: () => boolean,
+    sourceExts: Array<string>,
     transformCacheKey: string,
     transformCode: TransformCode,
     useWatchman: boolean,
@@ -86,7 +86,6 @@ class DependencyGraph {
     assetDependencies,
     assetExts,
     cache,
-    extensions,
     extraNodeModules,
     forceNodeFilesystemAPI,
     globalTransformCache,
@@ -100,6 +99,7 @@ class DependencyGraph {
     resetCache,
     roots,
     shouldThrowOnUnresolvedErrors = () => true,
+    sourceExts,
     transformCacheKey,
     transformCode,
     useWatchman,
@@ -109,7 +109,6 @@ class DependencyGraph {
     assetDependencies: Array<string>,
     assetExts: Array<string>,
     cache: Cache,
-    extensions?: ?Array<string>,
     extraNodeModules: ?Object,
     forceNodeFilesystemAPI?: boolean,
     globalTransformCache: ?GlobalTransformCache,
@@ -123,6 +122,7 @@ class DependencyGraph {
     resetCache: boolean,
     roots: Array<string>,
     shouldThrowOnUnresolvedErrors?: () => boolean,
+    sourceExts: Array<string>,
     transformCacheKey: string,
     transformCode: TransformCode,
     useWatchman?: ?boolean,
@@ -131,7 +131,6 @@ class DependencyGraph {
   }) {
     this._opts = {
       assetExts: assetExts || [],
-      extensions: extensions || ['js', 'json'],
       extraNodeModules,
       forceNodeFilesystemAPI: !!forceNodeFilesystemAPI,
       globalTransformCache,
@@ -147,6 +146,7 @@ class DependencyGraph {
       resetCache,
       roots,
       shouldThrowOnUnresolvedErrors,
+      sourceExts,
       transformCacheKey,
       transformCode,
       useWatchman: useWatchman !== false,
@@ -167,7 +167,7 @@ class DependencyGraph {
 
     const mw = this._opts.maxWorkers;
     this._haste = new JestHasteMap({
-      extensions: this._opts.extensions.concat(this._opts.assetExts),
+      extensions: this._opts.sourceExts.concat(this._opts.assetExts),
       forceNodeFilesystemAPI: this._opts.forceNodeFilesystemAPI,
       ignorePattern: {test: this._opts.ignoreFilePath},
       maxWorkers: typeof mw === 'number' && mw >= 1 ? mw : getMaxWorkers(),
@@ -213,7 +213,7 @@ class DependencyGraph {
 
       this._hasteMap = new HasteMap({
         files: hasteFSFiles,
-        extensions: this._opts.extensions,
+        extensions: this._opts.sourceExts,
         moduleCache: this._moduleCache,
         preferNativePlatform: this._opts.preferNativePlatform,
         helpers: this._helpers,
@@ -310,6 +310,7 @@ class DependencyGraph {
         platform,
         platforms: this._opts.platforms,
         preferNativePlatform: this._opts.preferNativePlatform,
+        sourceExts: this._opts.sourceExts,
       });
 
       const response = new ResolutionResponse({transformOptions});
