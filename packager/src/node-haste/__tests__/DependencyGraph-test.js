@@ -102,7 +102,6 @@ describe('DependencyGraph', function() {
     defaults = {
       assetExts: ['png', 'jpg'],
       cache: new Cache(),
-      extensions: ['js', 'json'],
       forceNodeFilesystemAPI: true,
       providesModuleNodeModules: [
         'haste-fbjs',
@@ -115,6 +114,7 @@ describe('DependencyGraph', function() {
       maxWorkerCount: 1,
       moduleOptions: {cacheTransformResults: true},
       resetCache: true,
+      sourceExts: ['js', 'json'],
       transformCode: (module, sourceCode, transformOptions) => {
         return new Promise(resolve => {
           let deps = {dependencies: [], dependencyOffsets: []};
@@ -5280,7 +5280,7 @@ describe('DependencyGraph', function() {
       var dgraph = DependencyGraph.load({
         ...defaults,
         roots: [root],
-        extensions: ['jsx', 'coffee'],
+        sourceExts: ['jsx', 'coffee'],
       });
 
       return dgraph
@@ -5294,8 +5294,8 @@ describe('DependencyGraph', function() {
         .then(deps => {
           expect(deps).toEqual([
             {
-              dependencies: ['a'],
-              id: 'index',
+              dependencies: ['./a'],
+              id: '/root/index.jsx',
               isAsset: false,
               isJSON: false,
               isPolyfill: false,
@@ -5304,7 +5304,7 @@ describe('DependencyGraph', function() {
             },
             {
               dependencies: [],
-              id: 'a',
+              id: '/root/a.coffee',
               isAsset: false,
               isJSON: false,
               isPolyfill: false,
