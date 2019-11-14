@@ -150,7 +150,7 @@
     "art": "^0.10.0",
     "base64-js": "^1.1.2",
     "chalk": "^1.1.1",
-    "commander": "^2.9.0",
+    "commander": "^4.0.1",
     "compression": "^1.7.1",
     "connect": "^3.6.5",
     "create-react-class": "^15.6.3",
